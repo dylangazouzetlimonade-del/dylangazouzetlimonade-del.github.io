@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Le Coffre</title>
+<!-- clé de secours : BANANE -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+:root{
+  --bg:#0d1420;        /* night steel */
+  --panel:#151f2f;     /* box face */
+  --line:#2a3850;      /* rivets, borders */
+  --fg:#e7e2d6;        /* paper white */
+  --muted:#8b96a8;     /* engraved text */
+  --brass:#c9a14a;     /* brass plates */
+  --brass-dim:#7d6430;
+  --bad:#e0745c;
+  --display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --body:"Barlow","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{margin:0}
+[hidden]{display:none!important}
+img{max-width:100%}
+body{color:var(--fg);font-family:var(--body);font-size:1rem;line-height:1.55;padding-inline:16px;padding-block:32px 64px}
+.wrap{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:32px}
+header{display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:center}
+.dial{width:112px;aspect-ratio:1;max-width:100%;border-radius:50%;position:relative;
+  background:radial-gradient(circle at 50% 50%,var(--panel) 0 38%,var(--line) 39% 41%,var(--panel) 42% 100%);
+  border:3px solid var(--brass-dim);box-shadow:inset 0 0 0 6px var(--bg),0 0 0 1px var(--line);transition:transform .9s cubic-bezier(.2,.8,.2,1)}
+.dial::before{content:"";position:absolute;inset:8px;border-radius:50%;
+  background:repeating-conic-gradient(var(--brass) 0 1.2deg,transparent 1.2deg 10deg);
+  -webkit-mask:radial-gradient(circle,transparent 0 58%,#000 59% 66%,transparent 67%);mask:radial-gradient(circle,transparent 0 58%,#000 59% 66%,transparent 67%)}
+.dial::after{content:"";position:absolute;left:50%;top:6px;width:4px;height:16px;margin-left:-2px;background:var(--brass);border-radius:2px}
+h1{font-family:var(--display);font-weight:900;font-size:clamp(2.6rem,9vw,4.2rem);line-height:.9;letter-spacing:.02em;margin:0;text-transform:uppercase;text-wrap:balance}
+.lede{margin:.5rem 0 0;color:var(--muted);max-width:44ch}
+form{display:flex;flex-wrap:wrap;gap:12px}
+label.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+#code{flex:1 1 240px;min-width:0;background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:6px;
+  padding:14px 16px;font-family:var(--mono);font-size:1.1rem;letter-spacing:.12em;text-transform:uppercase}
+#code:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+button{background:var(--brass);color:var(--bg);border:0;border-radius:6px;padding:14px 22px;font-family:var(--display);font-weight:700;font-size:1.25rem;letter-spacing:.06em;text-transform:uppercase;cursor:pointer}
+button:hover{filter:brightness(1.08)}
+button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+button[disabled]{opacity:.6;cursor:wait}
+.status{min-height:1.6em;margin:-16px 0 0;font-family:var(--mono);font-size:.9rem;color:var(--muted)}
+.status.bad{color:var(--bad)}
+.note{border:1px dashed var(--brass-dim);border-radius:6px;padding:14px 16px;color:var(--fg)}
+.note[hidden]{display:none}
+.tally{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--line);padding-bottom:8px;font-family:var(--mono);font-size:.85rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.tally b{color:var(--brass);font-variant-numeric:tabular-nums}
+#doors{display:flex;flex-direction:column;gap:20px}
+.empty{color:var(--muted);font-style:italic;margin:0}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:20px;display:grid;grid-template-columns:1fr auto;gap:8px 20px;animation:open .6s ease-out}
+.box>div{min-width:0}
+.plate{display:inline-block;font-family:var(--display);font-weight:700;font-size:.95rem;letter-spacing:.14em;text-transform:uppercase;color:var(--bg);background:var(--brass);padding:2px 10px;border-radius:3px;margin-bottom:10px}
+.box p{margin:0 0 .7em;max-width:60ch}
+.box p:last-child{margin-bottom:0}
+.frag{align-self:start;display:flex;flex-direction:column;align-items:center;gap:4px}
+.frag span{font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.frag b{display:grid;place-items:center;width:56px;height:64px;border:2px solid var(--brass);border-radius:6px;font-family:var(--display);font-weight:900;font-size:2.4rem;color:var(--brass)}
+.box figure{grid-column:1/-1;margin:8px 0 0}
+.box figure img{display:block;width:100%;border-radius:4px;border:1px solid var(--line)}
+.box figcaption{font-size:.9rem;color:var(--muted);margin-top:8px}
+.box a{color:var(--brass)}
+.obj{font-family:var(--display);font-weight:900;font-size:2.2rem;line-height:1;letter-spacing:.03em;text-transform:uppercase;color:var(--fg);margin:0 0 .4em}
+.final{border-color:var(--brass)}
+.final .plate{font-size:1.1rem}
+@keyframes open{from{transform:translateY(-6px);opacity:.4}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.box{animation:none}.dial{transition:none}}
+@media (max-width:460px){header{grid-template-columns:1fr}.dial{width:84px}.box{grid-template-columns:1fr}.frag{flex-direction:row;justify-self:start}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="dial" id="dial" aria-hidden="true"></div>
+    <div>
+      <h1>Le Coffre</h1>
+      <p class="lede">Chaque indice que tu gagnes cache une clé. Écris-la ici. Si elle est bonne, une porte s'ouvre.</p>
+    </div>
+  </header>
+
+  <form id="f" autocomplete="off">
+    <label class="sr" for="code">Clé</label>
+    <input id="code" name="code" placeholder="TA CLÉ" spellcheck="false" autocapitalize="characters">
+    <button id="go" type="submit">Ouvrir</button>
+  </form>
+  <p class="status" id="status" role="status" aria-live="polite"></p>
+  <div class="note" id="note" hidden></div>
+
+  <section aria-label="Portes ouvertes">
+    <div class="tally"><span>Portes ouvertes</span><b id="count">0</b></div>
+    <div id="doors"><p class="empty">Aucune porte ouverte pour l'instant.</p></div>
+  </section>
+</div>
+
+<script>
+const SALT="SVCAycnD/KH2nvYTbFU5nw==", ITER=1000000;
+const ENTRIES=[{"iv": "1Hbla/jhiumnV7o0", "ct": "ISqoiI4nmZi/2yRRm8h39UinupbrrBUY4LFk1otDpGQzWIZS4f19Fl1NDafEjr3NDE/ZRpfIr6ghmDr7StmY2Sijlla5zwpeZe7epqGs146zcBfZD9ziqKtCQcv5"}, {"iv": "p125T6xx7yY5IuZ4", "ct": "E1Q+ktzT2dSGq35RiVI0WGX/SaUXEgLjStBhQ25TIbJ8WRbECvhRoStfxG07GNfLgQI6bM6B64gf3M08jRUahuQO+XdkU2UIRewHndwYUi8vIsuxYiOaoBQD3xtWyFM8FAQYfh/j6w=="}, {"iv": "EmDZ/pV/MYK0kevX", "ct": "M+3w8ajEOXSInDerJEUV9V+Z1H6gGloSruM5TD3+y1UR539UVALaAHPZ15hIutVMUVU+GZnGjkSyIFaNNIfYSbqivdJQ3Lh9ldbEsJy9p7u7uQ7LbOVgz9WjFT0/HvCDMW8eDqWabDfXzEGJNZLS7gNW99YYHCmfOiu6Q1JYfPY="}, {"iv": "f9oz8zHKeo+DCd8R", "ct": "NfeFFQQekQauQPBilBW9kG+2Evaiqrvm8skwl1zhRwSjVhmspgLePUvRhbjcr40BMSkoHOSD7incm8QfWZRu144="}, {"iv": "7xW6b3kr0MmlSDha", "ct": "464xsTIB5dv0F8Fsq0BBWEbyzhn6jThWUHyThcNTIV43qLitQV/e9y7RyhnklFd87Cy3He4yOEd9q7VW0onFl/PfmP3SyG6p+VdTHhCwFWZJCeaXo/DNrgLL8ByOpi2NjvmHMD0bSKh8Ty9qxFRcuUtE0GckFJ71yywb"}, {"iv": "Xvv52AL4w3rDEUtD", "ct": "JyzjU13S8JKggqlNI1ytlJ8/VAORJnvsOvTGlCZjRjkmiEI6pQ4mhBJKT7wA4R8UbU02B4Wo1LMBNgAYSU9aEIrKMedaUFEXK+OukgK/pQ=="}, {"iv": "F8SACPfLOcebXLgr", "ct": "rD/xNUmgCfca94kaq4R/En5bwKfdvNeOn9RgyRbSQ3EziUqhnfKX3HlEIQvkGCNVoktsvKki+bKY"}, {"iv": "Y9r1gRI3Rphhrcs3", "ct": "02tbz/nwJgXK0LZ2KKuNouw5auk2uCdRzahwIwj89wwQ+rGLEfw9j3RFcYG1Mte9vGLhC8n418DHn2mEafKy80Hej63GNhEwtd83SZEL8Wkh8CdqXNHc7QumnQsLjzW8QO+u61wbTI32SWOagkrGhEZ5Q8I/BN69NogWZgcdxePAjSoe4RMS4uAY94vvj2V9qX1rsbDn2/rLLIlaw3JP/vQ189OD/TI+reyGz50/XwyCxI7zY74sb7wX/k8bBDMjulm/x1Pz4T0zD+2VJX4MBoZoHT9IvqLW9jRDsyUWb3LAsUdyKR0AU8okXSrUn8MRJ38bdvire7PMytq+cwxIEHxC/hoxBcWWLuiNudlqiPhUdkCWf4r+QlOgXTvMjU9tq7Rr6WqBAanBVzxgn33d8LOiRu3h8VpyhEomtkfjbO1TPq02V/BXVuwC4TNIDxZS5qz5DkgCpUKvt84E5TKivUoasDHbZQUusLkYVFe0lunbol2y69+3YA4PH7cBiN/joFvcdKPsC47a8yrFSFaijGzLx8LftIAHS00uXsYlwayiDK6XG2UIFDyYFsXqWdRTKwU3lpYTWkXBSb5XTXGwNxJl5Ye/jzmdpu1VwC2PWgCqfSM7DCn2nj9PIjgDdd6IGcEzeLVJER7jY5pdBi13wt20Ij7vsVE5tgwq"}, {"iv": "dexzEyYHQBcc93iV", "ct": "ZUMyOCdsjb/2ZyxZwq/24sisRtPHZldxavwQjBrVVSJEzSgvcpROTEDg1s0URGU6llewQXj4CZJqeY2O4jmCYw=="}, {"iv": "aiAuUgy6y/hecaKL", "ct": "sqLxDiwdebqeYLt2UqSjj0UgiVqKPn+5PHKg8r7Lz+hyRrGG+oHw4nC1Lqb9t8ka9TMiDR7YNpB0XdDIpqU5hwjc1pv5jwmc5Zof52rxsUmz4yCH46qmn1HnrTXi/l52rE4HdYuGBQ=="}, {"iv": "E5i03Dt2sz/x3ltA", "ct": "b/bZt2qHqZfgLSOPCbyz0KLAlI06ONecDtV9lYiJvqsA/QBNwY2edat2Isb6NFbJuedvQAqSOkHMeNnLW4HKKD8="}, {"iv": "i+C4hbR/hlLS0PSk", "ct": "8z0shhgtaPXSm78mTEJoN/u4g4E4HSuifQxT1ZVLuBokln6d/wsoxnhjqCWyh3qwr6nBADjMGlLqFg3FDP2dKUt7x89Mcjy5DVyQYlc/ixEj8FEa4BJZvDdBL35u6emcNrcN1ghoOXwo7GEjXbluZFo/fakESvQeuP8IkdIK5JIigCfQEmEzQHLaWM/52pe3YD91AQiSnEGkJ2adBz8o6skWwAPp/TOiDLEg/YJ7jNIvz2y72H7U1tIdHBEHECD1fUMYYaqVRcEDRL87YtVJUKDwAu+9DSx54wLV31BVQvAgy8l0PAqMflNtWBVwjJxgN43zKg/tyUBjwqGZogS6JW2vreM7sxgossWXYEs4qknj23TdirLHEU2xr4KpgANJtBft6pUfWtY7atlg0AjIRfgBTN3wyIXcXJ3okX68RCLUrLBzN23ieqpjQN2oYppTVLRuPsrOCPyiHkQHXcvrvbz/uTbxPGtp6H/xAioaDJz6T0jbQ3xEGr4pptr4M0pVFuyDVcQIAnLemWO0Xaa1cdxSRBAWrlQ3QVji1qh3q/MviXPiOkJhklc5d7I8ghuIvj9TFTC1vyuhYd7f56UTZ519o9MZ0ahOPg=="}, {"iv": "wHQol3yrCCB/Jg4b", "ct": "n+XQ7Kauh8O0yXIHW8U4AF0E05+T866onccSJyai1ZzDklSHWkEWFJxMiXjxWoNqsQxbNmH6szyoIBHsK1BKU84wDanYWYMgpqJbJwZN6+wtp8PMomcse4QyqbNKYMZySsujjAQbNGWNe4vGxLDNbxqaWHDBXip/X8Jz"}, {"iv": "TBgCtkbQnJCxWgPP", "ct": "gI5QVaI9B3++nLUjqpiDOnjAEsyrHEDLZsIAO41BFpxTXaXFkk88cRk0gn1oTIoqnF+GK0DvZGqXS8ifVJCY9Q=="}, {"iv": "PEdNyTYaD9YKpxfl", "ct": "+6dPOkzcU2CSetkr1SdfI+Rj5z9Qbbub6xt9Xnbf4MwMXy6e5v7ARo2RwGt54ulbDZnE2lraxbZ8vQ4+jMym1IBPmwKO4iajHKTPPMhkYe4KHUBj0p8x8fUTJ+KnoZBLWCl27cfVfiW2aoZK1DBnTjnN41RWiCOHpOJtzpvhht8KMg=="}, {"iv": "bvmTAcq8FURTo9ZW", "ct": "Zjckwea/gejf9w4OjroNz4cgXGNZVw36+R5e2HBROuG7axqHVo8X8CrqDGT2hf23pE4s1n26KTlK3JKWnPSwuA=="}, {"iv": "8sLxOPEToc8JBKdH", "ct": "OjbrEWQQw1su/y/VRaKkaLg+/psm79m8Gzv8UM1R3NmsJjunadcmxBtm9ybYjxVQEp7+30DoWGTnSlP+JGfQLNOE3ZL8i2rzafLnqvc2mg=="}, {"iv": "UrYxqukoY2p7wxmj", "ct": "t/rjCxGqAxAkQ+jksDkqY3Y5Ztnhfo8HKNHEMd3NFijTxSyqLD3/F/SqhHeT3rxSWSV8FZtvA3EB1mWJSZIpKCjhSW9UB8LJ1g8zjIvvLjn3MqoE+lwSP8QNX24Z35yU1Qba6a+wIDGAYk0FF+SUHiqBZdOm9IAEoqEfSp41ULyQAA=="}];
+const b64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+const norm=s=>s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toUpperCase().replace(/[^A-Z0-9]/g,"");
+async function keyFor(code){
+  const base=await crypto.subtle.importKey("raw",new TextEncoder().encode(code),"PBKDF2",false,["deriveKey"]);
+  return crypto.subtle.deriveKey({name:"PBKDF2",salt:b64(SALT),iterations:ITER,hash:"SHA-256"},base,{name:"AES-GCM",length:256},false,["decrypt"]);
+}
+async function tryCode(code){
+  const k=await keyFor(code);
+  for(const e of ENTRIES){
+    try{const pt=await crypto.subtle.decrypt({name:"AES-GCM",iv:b64(e.iv)},k,b64(e.ct));const r=JSON.parse(new TextDecoder().decode(pt));r._k=k;return r;}catch(_){}
+  }
+  return null;
+}
+const opened=new Map();
+const $=id=>document.getElementById(id);
+function render(){
+  const list=[...opened.values()].sort((a,b)=>a.n-b.n);
+  $("count").textContent=list.length;
+  $("doors").innerHTML=list.length?list.map(d=>`<article class="box${d.final?" final":""}"><div><span class="plate">${d.title}</span>${d.html}</div>${d.frag?`<div class="frag"><span>Fragment</span><b>${d.frag}</b></div>`:""}${d.figure||""}</article>`).join(""):`<p class="empty">Aucune porte ouverte pour l'instant.</p>`;
+}
+let pcURL=null;
+async function loadPostcard(){
+  const d=[...opened.values()].find(x=>x.pc); if(!d) return;
+  try{
+    if(!pcURL){
+      const buf=await (await fetch(d.pc.f)).arrayBuffer();
+      const png=await crypto.subtle.decrypt({name:"AES-GCM",iv:b64(d.pc.iv)},d._k,buf);
+      pcURL=URL.createObjectURL(new Blob([png],{type:"image/png"}));
+    }
+    const img=$("cp"), a=$("cpdl");
+    if(img) img.src=pcURL;
+    if(a){a.href=pcURL;a.download="porte1.png";}
+  }catch(_){const a=$("cpdl"); if(a) a.textContent="Recharge la page.";}
+}
+function save(){try{localStorage.setItem("coffre",JSON.stringify([...opened.keys()]))}catch(_){}}
+let turns=0;
+$("f").addEventListener("submit",async ev=>{
+  ev.preventDefault();
+  const code=norm($("code").value); if(!code) return;
+  $("go").disabled=true; $("status").className="status"; $("status").textContent="…"; $("note").hidden=true;
+  turns+=1; $("dial").style.transform=`rotate(${turns*137}deg)`;
+  const r=await tryCode(code);
+  $("go").disabled=false;
+  if(!r){$("status").className="status bad";$("status").textContent="Rien ne s'ouvre.";return;}
+  if(r.decoy){$("status").textContent="";$("note").innerHTML=r.html;$("note").hidden=false;return;}
+  if(opened.has(code)){$("status").textContent="Cette porte est déjà ouverte.";return;}
+  opened.set(code,r); save(); render(); loadPostcard(); $("code").value="";
+  $("status").textContent=r.final?"La dernière porte est ouverte.":"Une porte s'ouvre.";
+});
+(async()=>{
+  let saved=[]; try{saved=JSON.parse(localStorage.getItem("coffre")||"[]")}catch(_){}
+  for(const c of saved){const r=await tryCode(c); if(r&&!r.decoy) opened.set(c,r);}
+  render(); loadPostcard();
+})();
+</script>
+</body>
+</html>
